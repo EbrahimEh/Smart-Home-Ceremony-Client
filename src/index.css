@@ -1,4 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: light --default;
- }
+}
+
+@plugin "daisyui/theme" {
+  --color-primary: #FF6B6B;
+  --color-secondary: #4ECDC4;
+  --color-accent: #FFD166;
+  --color-neutral: #2D3047;
+  --color-base-100: #FFFFFF;
+  --color-base-200: #F8F9FA;
+  --color-base-300: #E9ECEF;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/* Custom gradient classes */
+.gradient-text {
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+}
+
+.gradient-border {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #FF6B6B, #4ECDC4) border-box;
+}
+
+.custom-btn {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  color: white;
+  border: none;
+}
+
+.custom-btn:hover {
+  background: linear-gradient(135deg, #FF5252, #FF6B6B);
+}
+
+.card-hover:hover {
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.15);
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
