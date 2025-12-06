@@ -1,12 +1,13 @@
 import { Link } from 'react-router';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import logImg from '../../../../assets/Logo.png'
 
 const Footer = () => {
     return (
         <footer className="footer flex flex-col footer-center p-10 bg-neutral text-neutral-content">
             {/* Top Section - Contact Details */}
             <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-8 w-full max-w-7xl">
-                
+
                 <div className="space-y-2 text-left md:space-y-4">
                     <div className="flex items-center gap-3">
                         <FaPhone className="text-secondary text-xl" />
@@ -31,7 +32,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-               
+
                 <div className="space-y-2 md:space-y-4">
                     <div className="flex items-center gap-3 justify-center">
                         <FaClock className="text-secondary text-2xl" />
@@ -45,7 +46,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-                
+
                 <div className="space-y-2 md:space-y-4">
                     <p className="text-xl font-bold">Follow Us</p>
                     <div className="flex justify-center gap-4">
@@ -70,11 +71,14 @@ const Footer = () => {
 
             {/* Bottom Section - Copyright */}
             <div className="text-center">
-                <div className="mb-4">
-                    <Link to="/" className="text-2xl font-bold gradient-text">Smart Home</Link>
-                    <p className="mt-2 opacity-90">Your one-stop solution for home & ceremony decorations</p>
+                <div className="mb-4 flex flex-col items-center">
+                    <img className='h-16 w-16 rounded-full border-2 border-white p-1' src={logImg} alt="" />
+                    <div>
+                        <Link to="/" className="text-2xl font-bold gradient-text">Smart Home</Link>
+                        <p className="mt-2 opacity-90">Your one-stop solution for home & ceremony decorations</p>
+                    </div>
                 </div>
-                
+
                 <div className="flex flex-wrap justify-center gap-6 text-sm opacity-80">
                     <Link to="/privacy" >Privacy Policy</Link>
                     <Link to="/terms" >Terms of Service</Link>

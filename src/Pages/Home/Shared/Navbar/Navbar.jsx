@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { FaHome, FaConciergeBell, FaInfoCircle, FaPhoneAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
+import logoImg from '../../../../assets/Logo.png'
 
 const Navbar = () => {
     const isLoggedIn = false; 
@@ -26,7 +27,8 @@ const Navbar = () => {
                 {/* Logo & Brand */}
                 <Link to="/" className="text-xl flex items-center md:text-xl md:gap-1 gap-0">
                     <div className="hidden md:flex text-black md:p-2 p-0 rounded-lg">
-                        <FaHome />
+                        {/* <FaHome /> */}
+                        <img className='h-8 w-8' src={logoImg} alt="" />
                     </div>
                     <span className="gradient-text pl-2 font-bold">Smart Home</span>
                 </Link>
