@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { FaEnvelope, FaLock, FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-import useAuth from '../../../hooks/useAuth';
 import logoImg from '../../../assets/Logo.png'
+import useAuth from '../../../hooks/useAuth';
 
 const Login = () => {
     const { signIn, googleSignIn } = useAuth();
@@ -12,6 +12,7 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
+    // Get where user came from, or default to dashboard
     const from = location.state?.from?.pathname || '/';
 
     const [formData, setFormData] = useState({
@@ -19,7 +20,6 @@ const Login = () => {
         password: ''
     });
 
-  
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -41,7 +41,6 @@ const Login = () => {
         }
     };
 
-    // Email/Password Login
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -83,13 +82,9 @@ const Login = () => {
                     </p>
                 </div>
 
-                {/* Login Card */}
                 <div className="bg-white rounded-xl shadow-lg p-5 md:p-8">
                     
-
-                    {/* Login Form */}
                     <form onSubmit={handleSubmit} className="space-y-5 mt-6">
-                        {/* Email */}
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text font-medium">Email Address</span>
@@ -108,7 +103,6 @@ const Login = () => {
                             </div>
                         </div>
 
-                      
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text font-medium">Password</span>
@@ -139,7 +133,6 @@ const Login = () => {
                             </div>
                         </div>
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={loading}
@@ -158,7 +151,6 @@ const Login = () => {
 
                     <div className="divider text-sm text-gray-500">OR</div>
 
-                    {/* Google Login */}
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
@@ -168,9 +160,6 @@ const Login = () => {
                         <span className="font-medium">Continue with Google</span>
                     </button>
 
-                    
-
-                   
                     <div className="text-center mt-8">
                         <p className="text-gray-600 text-sm">
                             Don't have an account?{' '}
@@ -181,12 +170,12 @@ const Login = () => {
                     </div>
                 </div>
 
-                
                 <div className="mt-6 bg-base-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-gray-600 mb-2">Demo Credentials:</p>
+                    <p className="text-sm text-gray-600 mb-2">After login, you will be redirected to:</p>
                     <div className="text-xs space-y-1">
-                        <p className="text-gray-700"><strong>Email:</strong> demo@example.com</p>
-                        <p className="text-gray-700"><strong>Password:</strong> 123456</p>
+                        <p className="text-gray-700"><strong>Regular User:</strong> Dashboard</p>
+                        <p className="text-gray-700"><strong>Admin:</strong> Admin Dashboard</p>
+                        <p className="text-gray-700"><strong>Decorator:</strong> Decorator Dashboard</p>
                     </div>
                 </div>
             </div>
