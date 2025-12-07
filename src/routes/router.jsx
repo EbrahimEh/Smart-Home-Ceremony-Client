@@ -3,6 +3,7 @@ import RootLayout from "../Layout/RootLayout";
 import AuthLayout from "../Layout/AuthLayout";
 import Login from "../Pages/Auth/Login/Login";
 import Register from "../Pages/Auth/Register/Register";
+import Home from "../Pages/Home/Home/Home";
 
 
 export const router = createBrowserRouter([
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
+                Component: Home
             }
         ]
     },
