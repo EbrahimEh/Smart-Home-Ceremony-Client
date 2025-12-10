@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaCamera } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import useAuth from '../../../hooks/useAuth';
+import toast from 'react-hot-toast';
+import logoImg from '../../../assets/Logo.png'
 
 const Register = () => {
     const { createUser, updateUserProfile, googleSignIn } = useAuth();
@@ -10,6 +12,11 @@ const Register = () => {
     const [profileImage, setProfileImage] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+
+ 
+    const from = location.state?.from || '/';
+    console.log('Register page - Will redirect to:', from);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -20,15 +27,26 @@ const Register = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prev => ({
+            ...prev,
             [name]: value
-        });
+        }));
     };
 
+    
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('Image size should be less than 5MB');
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please upload an image file');
+                return;
+            }
+
             setProfileImage(file);
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -39,32 +57,32 @@ const Register = () => {
     };
 
     const validateForm = () => {
-        if (formData.name === '') {
-            Swal.fire('Error', 'Please enter your name', 'error');
+        if (formData.name.trim() === '') {
+            toast.error('Please enter your name');
             return false;
         }
-        if (formData.email === '') {
-            Swal.fire('Error', 'Please enter your email', 'error');
+        if (formData.email.trim() === '') {
+            toast.error('Please enter your email');
             return false;
         }
-        if (!formData.email.includes('@')) {
-            Swal.fire('Error', 'Please enter a valid email', 'error');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            toast.error('Please enter a valid email address');
             return false;
         }
         if (formData.password === '') {
-            Swal.fire('Error', 'Please enter a password', 'error');
+            toast.error('Please enter a password');
             return false;
         }
         if (formData.password.length < 6) {
-            Swal.fire('Error', 'Password must be at least 6 characters', 'error');
+            toast.error('Password must be at least 6 characters');
             return false;
         }
         if (formData.confirmPassword === '') {
-            Swal.fire('Error', 'Please confirm your password', 'error');
+            toast.error('Please confirm your password');
             return false;
         }
         if (formData.password !== formData.confirmPassword) {
-            Swal.fire('Error', 'Passwords do not match', 'error');
+            toast.error('Passwords do not match');
             return false;
         }
         return true;
@@ -74,10 +92,15 @@ const Register = () => {
         try {
             setLoading(true);
             await googleSignIn();
-            Swal.fire('Success', 'Account created with Google', 'success');
-            navigate('/');
+            toast.success('Account created with Google!');
+
+
+            console.log('Google registration successful, navigating to:', from);
+            navigate(from, { replace: true });
+
         } catch (error) {
-            Swal.fire('Error', error.message, 'error');
+            console.error('Google signup error:', error);
+            toast.error(error.message || 'Google signup failed');
         } finally {
             setLoading(false);
         }
@@ -87,14 +110,14 @@ const Register = () => {
         try {
             const formData = new FormData();
             formData.append('image', imageFile);
-            
+
             const response = await fetch('https://api.imgbb.com/1/upload?key=3f9f843508f62c0d3183182e3a0db5d0', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 return data.data.url;
             } else {
@@ -108,25 +131,29 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) return;
 
         setLoading(true);
 
         try {
-            const userCredential = await createUser(formData.email, formData.password);
-            const user = userCredential.user;
-
             let imageBBUrl = '';
             if (profileImage) {
                 imageBBUrl = await uploadImageToImageBB(profileImage);
             }
 
-            if (imageBBUrl) {
-                await updateUserProfile(formData.name, imageBBUrl);
-            } else {
-                await updateUserProfile(formData.name, '');
+            if (!imageBBUrl) {
+                imageBBUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
             }
+
+            const userCredential = await createUser(
+                formData.email,
+                formData.password,
+                formData.name,
+                imageBBUrl
+            );
+
+            const user = userCredential.user;
 
             const userData = {
                 uid: user.uid,
@@ -134,12 +161,15 @@ const Register = () => {
                 email: user.email,
                 photoURL: imageBBUrl,
                 role: 'user',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             };
 
             const response = await fetch('http://localhost:3000/users', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(userData)
             });
 
@@ -148,225 +178,237 @@ const Register = () => {
             if (result.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Registration Successful!',
-                    html: `
-                        <div class="text-center">
-                            <p class="text-lg font-medium">Welcome ${formData.name}!</p>
-                            <p class="text-gray-600 mt-2">Your account has been created.</p>
-                            <p class="text-sm text-gray-500 mt-3">Please login with your email and password.</p>
-                        </div>
-                    `,
-                    showConfirmButton: true,
-                    confirmButtonText: 'Go to Login'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        navigate('/login');
-                    }
+                    title: `Welcome ${formData.name}!`,
+                    text: 'Account created successfully',
+                    timer: 2000,
+                    showConfirmButton: false
                 });
-                
-              
-                setTimeout(() => {
-                    navigate('/login');
-                }, 3000);
+                console.log('Registration successful, navigating to:', from);
+                navigate(from, { replace: true });
 
             } else {
-                Swal.fire('Error', 'Failed to save user data', 'error');
+                throw new Error('Failed to save user data to database');
             }
 
         } catch (error) {
             console.error('Registration error:', error);
-            
-            let errorMsg = 'Registration failed';
+
+            let errorMsg = 'Registration failed. Please try again.';
             if (error.code === 'auth/email-already-in-use') {
-                errorMsg = 'Email already in use';
+                errorMsg = 'Email already in use. Please use a different email.';
             } else if (error.code === 'auth/weak-password') {
-                errorMsg = 'Password is too weak (min 6 chars)';
+                errorMsg = 'Password is too weak. Use at least 6 characters.';
             } else if (error.code === 'auth/invalid-email') {
-                errorMsg = 'Invalid email address';
+                errorMsg = 'Invalid email address.';
             } else if (error.code === 'auth/network-request-failed') {
-                errorMsg = 'Network error. Check internet connection';
-            } else if (error.code === 'auth/invalid-profile-attribute') {
-                errorMsg = 'Profile photo issue. Try a different image.';
+                errorMsg = 'Network error. Please check your internet connection.';
             }
-            
-            Swal.fire('Error', errorMsg, 'error');
+
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <div className="w-full max-w-lg">
+
                 <div className="text-center mb-8">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg">
-                        <FaUser className="text-white text-3xl" />
+                    <div className="w-20 h-20 bg-gradient-to-r rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <img className='rounded-full' src={logoImg} alt="" />
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold gradient-text mb-2">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
                         Create Account
                     </h1>
-                    <p className="text-gray-600">Register first, then login</p>
+                    <p className="text-gray-600">
+                        Join Smart Home Services
+                    </p>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-                    
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Full Name</span>
+                <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Full Name
                             </label>
                             <div className="relative">
-                                <FaUser className="absolute left-3 top-3 text-gray-400" />
+                                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="input input-bordered w-full pl-10"
-                                    placeholder="Enter your name"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Enter your full name"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Email Address</span>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
                             </label>
                             <div className="relative">
-                                <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
+                                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="input input-bordered w-full pl-10"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="you@example.com"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Password</span>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Password
                             </label>
                             <div className="relative">
-                                <FaLock className="absolute left-3 top-3 text-gray-400" />
+                                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="input input-bordered w-full pl-10"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="At least 6 characters"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Confirm Password</span>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Confirm Password
                             </label>
                             <div className="relative">
-                                <FaLock className="absolute left-3 top-3 text-gray-400" />
+                                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     name="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
-                                    className="input input-bordered w-full pl-10"
-                                    placeholder="Re-enter password"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Re-enter your password"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Profile Photo (Optional)</span>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Profile Photo (Optional)
                             </label>
                             <div className="relative">
-                                <FaCamera className="absolute left-3 top-3 text-gray-400" />
+                                <FaCamera className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageUpload}
-                                    className="file-input file-input-bordered w-full pl-10"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
                                 />
                             </div>
-                            {imagePreview && (
-                                <div className="mt-3 flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-300">
-                                        <img 
-                                            src={imagePreview} 
-                                            alt="Preview" 
+
+                            {imagePreview ? (
+                                <div className="mt-3 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
-                                    <span className="text-sm text-green-600">
-                                        ✓ Photo ready to upload
-                                    </span>
+                                    <div>
+                                        <p className="text-sm font-medium text-green-600">✓ Photo ready to upload</p>
+                                        <p className="text-xs text-gray-500">Will appear in your profile</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="mt-3 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center bg-gray-200">
+                                        <FaUser className="text-gray-400 text-2xl" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600">No photo selected</p>
+                                        <p className="text-xs text-gray-500">Default avatar will be used</p>
+                                    </div>
                                 </div>
                             )}
                         </div>
 
-                        <div className="form-control mt-4">
-                            <label className="label cursor-pointer justify-start gap-2">
-                                <input 
-                                    type="checkbox" 
-                                    className="checkbox checkbox-primary" 
-                                    required 
-                                />
-                                <span className="label-text">
-                                    I agree to Terms & Privacy
-                                </span>
+                        <div className="flex items-start gap-3 mt-6">
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                required
+                            />
+                            <label htmlFor="terms" className="text-sm text-gray-600">
+                                I agree to the <a href="#" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
                             </label>
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="btn btn-primary w-full mt-6 py-3 font-semibold"
+                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-4"
                         >
                             {loading ? (
-                                <>
-                                    <span className="loading loading-spinner"></span>
+                                <span className="flex items-center justify-center">
+                                    <span className="loading loading-spinner loading-sm mr-2"></span>
                                     Creating Account...
-                                </>
+                                </span>
                             ) : (
                                 'Create Account'
                             )}
                         </button>
                     </form>
 
-                    <div className="divider my-6">OR</div>
+                
+                    <div className="flex items-center my-8">
+                        <div className="flex-1 border-t border-gray-300"></div>
+                        <span className="px-4 text-gray-500 text-sm">OR</span>
+                        <div className="flex-1 border-t border-gray-300"></div>
+                    </div>
 
                     <button
                         onClick={handleGoogleSignUp}
                         disabled={loading}
-                        className="btn btn-outline w-full gap-3 py-3"
+                        className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
                     >
                         <FaGoogle className="text-red-500 text-lg" />
-                        <span className="font-medium">Sign up with Google</span>
+                        Sign up with Google
                     </button>
 
                     <div className="text-center mt-8">
                         <p className="text-gray-600">
                             Already have an account?{' '}
-                            <Link to="/login" className="text-primary font-semibold hover:underline">
+                            <Link
+                                to="/auth/login"
+                                state={{ from: from }}
+                                className="text-blue-600 font-semibold hover:underline"
+                            >
                                 Sign in here
                             </Link>
                         </p>
                     </div>
                 </div>
 
-                <div className="mt-6 bg-base-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-gray-600">
-                        After registration, you will be redirected to login page.
-                    </p>
-                </div>
+        
+                {from !== '/' && (
+                    <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                        <p className="text-sm text-blue-700">
+                            After registration, you'll be redirected back to your booking
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

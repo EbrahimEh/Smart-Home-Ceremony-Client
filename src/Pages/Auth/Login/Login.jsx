@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { FaEnvelope, FaLock, FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import logoImg from '../../../assets/Logo.png'
 import useAuth from '../../../hooks/useAuth';
+import toast from 'react-hot-toast';
+import logoImg from '../../../assets/Logo.png'
 
 const Login = () => {
     const { signIn, googleSignIn } = useAuth();
@@ -11,10 +11,10 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+ 
+    const from = location.state?.from || '/';
+    console.log('Login page - Redirecting to:', from);
     
-    // Get where user came from, or default to dashboard
-    const from = location.state?.from?.pathname || '/';
-
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -22,30 +22,17 @@ const Login = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prev => ({
+            ...prev,
             [name]: value
-        });
-    };
-
-    const handleGoogleLogin = async () => {
-        try {
-            setLoading(true);
-            await googleSignIn();
-            Swal.fire('Success', 'Logged in with Google!', 'success');
-            navigate(from, { replace: true });
-        } catch (error) {
-            Swal.fire('Error', error.message, 'error');
-        } finally {
-            setLoading(false);
-        }
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (!formData.email || !formData.password) {
-            Swal.fire('Error', 'Please fill all fields', 'error');
+            toast.error('Please fill all fields');
             return;
         }
 
@@ -53,81 +40,110 @@ const Login = () => {
 
         try {
             await signIn(formData.email, formData.password);
-            Swal.fire('Success', 'Login successful!', 'success');
+            toast.success('Login successful!');
+
+            console.log('Login successful, navigating to:', from);
             navigate(from, { replace: true });
+            
         } catch (error) {
-            let errorMsg = 'Login failed';
-            if (error.code === 'auth/user-not-found') errorMsg = 'User not found';
-            if (error.code === 'auth/wrong-password') errorMsg = 'Wrong password';
-            if (error.code === 'auth/invalid-email') errorMsg = 'Invalid email';
-            Swal.fire('Error', errorMsg, 'error');
+            console.error('Login error:', error);
+            
+            let errorMsg = 'Login failed. Please check your credentials.';
+            if (error.code === 'auth/user-not-found') {
+                errorMsg = 'User not found. Please check your email.';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMsg = 'Wrong password. Please try again.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMsg = 'Invalid email format.';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMsg = 'Too many attempts. Try again later.';
+            }
+            
+            toast.error(errorMsg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            setLoading(true);
+            await googleSignIn();
+            toast.success('Google login successful!');
+            
+            console.log('Google login successful, navigating to:', from);
+            navigate(from, { replace: true });
+            
+        } catch (error) {
+            console.error('Google login error:', error);
+            toast.error(error.message || 'Google login failed');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <div className="w-full max-w-md">
                 
                 <div className="text-center mb-8">
-                    <div className="from-primary to-secondary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-white text-2xl font-bold"><img src={logoImg} alt="" /></span>
+                    <div className="w-20 h-20 bg-gradient-to-r rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <img className='rounded-full' src={logoImg} alt="" />
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold gradient-text mb-2">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
                         Welcome Back
                     </h1>
-                    <p className="text-gray-600 text-sm md:text-base">
-                        Sign in to your account
+                    <p className="text-gray-600">
+                        Sign in to your account to continue
                     </p>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-lg p-5 md:p-8">
+                <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
                     
-                    <form onSubmit={handleSubmit} className="space-y-5 mt-6">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Email Address</span>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
                             </label>
                             <div className="relative">
-                                <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
+                                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="input input-bordered w-full pl-5"
-                                    placeholder="Your Email"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="your@email.com"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">Password</span>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Password
                             </label>
                             <div className="relative">
-                                <FaLock className="absolute left-3 top-3 text-gray-400" />
+                                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="input input-bordered w-full pl-5 pr-10"
+                                    className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="••••••••"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-3 text-gray-500"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                 >
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
-                            <div className="label">
-                                <Link to="/forgot-password" className="label-text-alt text-primary hover:underline">
+                            <div className="flex justify-end mt-2">
+                                <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -136,48 +152,58 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="btn btn-primary w-full py-3 font-semibold text-lg"
+                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                         >
                             {loading ? (
-                                <>
-                                    <span className="loading loading-spinner"></span>
+                                <span className="flex items-center justify-center">
+                                    <span className="loading loading-spinner loading-sm mr-2"></span>
                                     Signing in...
-                                </>
+                                </span>
                             ) : (
                                 'Sign In'
                             )}
                         </button>
                     </form>
 
-                    <div className="divider text-sm text-gray-500">OR</div>
+                    <div className="flex items-center my-8">
+                        <div className="flex-1 border-t border-gray-300"></div>
+                        <span className="px-4 text-gray-500 text-sm">OR</span>
+                        <div className="flex-1 border-t border-gray-300"></div>
+                    </div>
 
                     <button
                         onClick={handleGoogleLogin}
                         disabled={loading}
-                        className="btn btn-outline w-full gap-3 mb-6 py-3 hover:bg-gray-50"
+                        className="w-full border border-gray-300 py-3 rounded-lg font-medium flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
                     >
                         <FaGoogle className="text-red-500 text-lg" />
-                        <span className="font-medium">Continue with Google</span>
+                        Continue with Google
                     </button>
 
                     <div className="text-center mt-8">
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-gray-600">
                             Don't have an account?{' '}
-                            <Link to="/register" className="text-primary font-semibold hover:underline">
+                            <Link 
+                                to="/auth/register" 
+                                state={{ from: from }} 
+                                className="text-blue-600 font-semibold hover:underline"
+                            >
                                 Create one
                             </Link>
                         </p>
                     </div>
                 </div>
 
-                <div className="mt-6 bg-base-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-gray-600 mb-2">After login, you will be redirected to:</p>
-                    <div className="text-xs space-y-1">
-                        <p className="text-gray-700"><strong>Regular User:</strong> Dashboard</p>
-                        <p className="text-gray-700"><strong>Admin:</strong> Admin Dashboard</p>
-                        <p className="text-gray-700"><strong>Decorator:</strong> Decorator Dashboard</p>
+                {from !== '/' && (
+                    <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                        <p className="text-sm text-blue-700">
+                            After login, you'll be redirected back to your booking
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1">
+                            {from}
+                        </p>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
