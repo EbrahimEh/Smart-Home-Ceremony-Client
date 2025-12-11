@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { FaSearch, FaFilter, FaStar } from 'react-icons/fa';
+import { BallTriangle } from 'react-loader-spinner';
 
 const Services = () => {
     const [services, setServices] = useState([]);
@@ -16,14 +17,14 @@ const Services = () => {
         try {
             const response = await fetch('http://localhost:3000/api/services');
             if (!response.ok) throw new Error('Failed to fetch services');
-            
+
             const data = await response.json();
             console.log('Services loaded:', data);
 
             data.forEach(service => {
                 console.log(`Service: ${service.service_name}, ID: ${service._id}, Type: ${typeof service._id}`);
             });
-            
+
             setServices(data);
         } catch (error) {
             console.error('Error fetching services:', error);
@@ -42,7 +43,16 @@ const Services = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <div className="loading loading-spinner loading-lg"></div>
+                render(<BallTriangle
+                    height={100}
+                    width={100}
+                    radius={5}
+                    color="#4fa94d"
+                    ariaLabel="ball-triangle-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                />)
             </div>
         );
     }
@@ -117,12 +127,12 @@ const Services = () => {
                                         <span className="text-sm text-gray-500">{service.duration}</span>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl font-bold">${service.cost?.toLocaleString()}</div>
+                                        <div className="text-xl font-bold">BDT {service.cost?.toLocaleString()}</div>
                                         <div className="text-sm text-gray-500">/{service.unit}</div>
                                     </div>
                                 </div>
                                 <div className="card-actions justify-end mt-4">
-                                    <Link 
+                                    <Link
                                         to={`/services/${service._id}`}
                                         onClick={() => console.log('Navigating to service ID:', service._id)}
                                     >
@@ -140,7 +150,7 @@ const Services = () => {
                 {filteredServices.length === 0 && (
                     <div className="text-center py-12">
                         <p className="text-gray-500 text-lg">No services found</p>
-                        <button 
+                        <button
                             onClick={() => {
                                 setSearch('');
                                 setCategory('');

@@ -14,6 +14,8 @@ import Payment from "../Pages/Payment/Payment";
 import UserDashboard from "../Pages/Dashboard/UserDashboard/UserDashboard";
 import MyBookings from "../Pages/Dashboard/MyBookings/MyBookings";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
+import ErrorPage from "../Pages/ErrorPage/ErrorPage";
+import BookingDetails from "../Pages/Dashboard/BookingDetails/BookingDetails";
 
 
 export const router = createBrowserRouter([
@@ -67,7 +69,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'my-bookings/:bookingId',
-                        element: <MyBookings />
+                        element: <BookingDetails></BookingDetails>
                     },
                     {
                         path: 'payment-history',

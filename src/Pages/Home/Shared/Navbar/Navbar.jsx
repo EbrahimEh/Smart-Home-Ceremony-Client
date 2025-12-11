@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { 
     FaHome, 
     FaConciergeBell, 
@@ -7,8 +7,7 @@ import {
     FaUser, 
     FaCalendarAlt, 
     FaSignOutAlt, 
-    FaBookOpen,
-    FaUserCircle
+    FaBookOpen
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import useAuth from '../../../../hooks/useAuth';
@@ -18,6 +17,7 @@ import Swal from 'sweetalert2';
 const Navbar = () => {
     const { user, logOut } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = async () => {
         const confirmed = await Swal.fire({
@@ -44,6 +44,13 @@ const Navbar = () => {
 
     const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
+    const isActive = (path) => {
+        if (path === '/') {
+            return location.pathname === '/';
+        }
+        return location.pathname.startsWith(path);
+    };
+
     return (
         <div className='w-full bg-white sticky top-0 z-50 shadow-sm'>
             <div className="navbar bg-base-100 md:px-4 max-w-[1600px] mx-auto">
@@ -56,17 +63,73 @@ const Navbar = () => {
                             </svg>
                         </label>
                         <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><Link to="/" className="flex items-center gap-2"><FaHome /> Home</Link></li>
-                            <li><Link to="/services" className="flex items-center gap-2"><FaConciergeBell /> Services</Link></li>
-                            <li><Link to="/about" className="flex items-center gap-2"><FaInfoCircle /> About</Link></li>
-                            <li><Link to="/contact" className="flex items-center gap-2"><FaPhoneAlt /> Contact</Link></li>
+                            <li>
+                                <Link 
+                                    to="/" 
+                                    className={`flex items-center gap-2 ${isActive('/') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                >
+                                    <FaHome /> Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link 
+                                    to="/services" 
+                                    className={`flex items-center gap-2 ${isActive('/services') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                >
+                                    <FaConciergeBell /> Services
+                                </Link>
+                            </li>
+                            <li>
+                                <Link 
+                                    to="/about" 
+                                    className={`flex items-center gap-2 ${isActive('/about') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                >
+                                    <FaInfoCircle /> About
+                                </Link>
+                            </li>
+                            <li>
+                                <Link 
+                                    to="/contact" 
+                                    className={`flex items-center gap-2 ${isActive('/contact') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                >
+                                    <FaPhoneAlt /> Contact
+                                </Link>
+                            </li>
                             {user && (
                                 <>
-                                    <li><Link to="/dashboard" className="flex items-center gap-2"><FaCalendarAlt /> Dashboard</Link></li>
-                                    <li><Link to="/booking" className="flex items-center gap-2"><FaBookOpen /> Book Now</Link></li>
+                                    <li>
+                                        <Link 
+                                            to="/dashboard" 
+                                            className={`flex items-center gap-2 ${isActive('/dashboard') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                        >
+                                            <FaCalendarAlt /> Dashboard
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link 
+                                            to="/booking" 
+                                            className={`flex items-center gap-2 ${isActive('/booking') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                        >
+                                            <FaBookOpen /> Book Now
+                                        </Link>
+                                    </li>
                                     <div className="divider my-1"></div>
-                                    <li><Link to="/profile" className="flex items-center gap-2"><FaUser /> Profile</Link></li>
-                                    <li><Link to="/bookings" className="flex items-center gap-2"><FaBookOpen /> My Bookings</Link></li>
+                                    <li>
+                                        <Link 
+                                            to="/profile" 
+                                            className={`flex items-center gap-2 ${isActive('/profile') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                        >
+                                            <FaUser /> Profile
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link 
+                                            to="/dashboard/my-bookings" 
+                                            className={`flex items-center gap-2 ${isActive('/dashboard/my-bookings') ? 'bg-blue-50 text-blue-600' : ''}`}
+                                        >
+                                            <FaBookOpen /> My Bookings
+                                        </Link>
+                                    </li>
                                     <li>
                                         <button 
                                             onClick={handleLogout}
@@ -105,11 +168,15 @@ const Navbar = () => {
                 </div>
 
                 <div className="navbar-center hidden lg:flex lg:flex-1 lg:justify-center">
-                    <ul className="menu menu-horizontal gap-8 px-1">
+                    <ul className="menu menu-horizontal gap-1 px-1">
                         <li>
                             <Link 
                                 to="/" 
-                                className="font-medium text-gray-700 hover:text-blue-600 hover:bg-transparent transition-colors"
+                                className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
+                                    isActive('/') 
+                                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
+                                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                                }`}
                             >
                                 <FaHome className="mr-2" /> Home
                             </Link>
@@ -117,7 +184,11 @@ const Navbar = () => {
                         <li>
                             <Link 
                                 to="/services" 
-                                className="font-medium text-gray-700 hover:text-blue-600 hover:bg-transparent transition-colors"
+                                className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
+                                    isActive('/services') 
+                                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
+                                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                                }`}
                             >
                                 <FaConciergeBell className="mr-2" /> Services
                             </Link>
@@ -125,7 +196,11 @@ const Navbar = () => {
                         <li>
                             <Link 
                                 to="/about" 
-                                className="font-medium text-gray-700 hover:text-blue-600 hover:bg-transparent transition-colors"
+                                className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
+                                    isActive('/about') 
+                                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
+                                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                                }`}
                             >
                                 <FaInfoCircle className="mr-2" /> About
                             </Link>
@@ -133,7 +208,11 @@ const Navbar = () => {
                         <li>
                             <Link 
                                 to="/contact" 
-                                className="font-medium text-gray-700 hover:text-blue-600 hover:bg-transparent transition-colors"
+                                className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
+                                    isActive('/contact') 
+                                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
+                                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                                }`}
                             >
                                 <FaPhoneAlt className="mr-2" /> Contact
                             </Link>
@@ -147,24 +226,46 @@ const Navbar = () => {
                             <div className="hidden md:flex items-center gap-3">
                                 <Link 
                                     to="/dashboard" 
-                                    className="btn btn-outline btn-primary btn-sm gap-2 min-w-[120px]"
+                                    className={`btn btn-sm gap-2 min-w-[120px] ${
+                                        isActive('/dashboard') 
+                                        ? 'btn-primary border-2 border-blue-600' 
+                                        : 'btn-outline btn-primary'
+                                    }`}
                                 >
                                     <FaCalendarAlt /> Dashboard
                                 </Link>
                                 <Link 
                                     to="/booking" 
-                                    className="btn btn-primary btn-sm gap-2 min-w-[120px]"
+                                    className={`btn btn-sm gap-2 min-w-[120px] ${
+                                        isActive('/booking') 
+                                        ? 'btn-primary border-2 border-blue-600 bg-blue-700' 
+                                        : 'btn-primary'
+                                    }`}
                                 >
                                     <FaBookOpen /> Book Now
                                 </Link>
                             </div>
 
                             <div className="flex items-center gap-2 md:hidden">
-                                <Link to="/dashboard" className="btn btn-ghost btn-circle btn-sm">
-                                    <FaCalendarAlt className="text-lg text-gray-600" />
+                                <Link 
+                                    to="/dashboard" 
+                                    className={`btn btn-circle btn-sm ${
+                                        isActive('/dashboard') 
+                                        ? 'bg-blue-100 text-blue-600' 
+                                        : 'btn-ghost'
+                                    }`}
+                                >
+                                    <FaCalendarAlt className="text-lg" />
                                 </Link>
-                                <Link to="/booking" className="btn btn-ghost btn-circle btn-sm">
-                                    <FaBookOpen className="text-lg text-gray-600" />
+                                <Link 
+                                    to="/booking" 
+                                    className={`btn btn-circle btn-sm ${
+                                        isActive('/booking') 
+                                        ? 'bg-blue-600 text-white' 
+                                        : 'btn-ghost'
+                                    }`}
+                                >
+                                    <FaBookOpen className="text-lg" />
                                 </Link>
                             </div>
 
@@ -231,36 +332,54 @@ const Navbar = () => {
                                         <li>
                                             <Link 
                                                 to="/profile" 
-                                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                                                className={`flex items-center gap-3 py-3 px-4 transition-colors ${
+                                                    isActive('/profile') 
+                                                    ? 'bg-blue-50 text-blue-600' 
+                                                    : 'hover:bg-gray-100'
+                                                }`}
                                             >
-                                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                                    <FaUser className="text-blue-600 text-sm" />
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                                    isActive('/profile') ? 'bg-blue-100' : 'bg-blue-50'
+                                                }`}>
+                                                    <FaUser className={`text-sm ${isActive('/profile') ? 'text-blue-600' : 'text-blue-500'}`} />
                                                 </div>
-                                                <span className="font-medium text-gray-700">Profile Settings</span>
+                                                <span className="font-medium">Profile Settings</span>
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link 
                                                 to="/dashboard" 
-                                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                                                className={`flex items-center gap-3 py-3 px-4 transition-colors ${
+                                                    isActive('/dashboard') 
+                                                    ? 'bg-blue-50 text-blue-600' 
+                                                    : 'hover:bg-gray-100'
+                                                }`}
                                             >
-                                                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                                                    <FaCalendarAlt className="text-purple-600 text-sm" />
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                                    isActive('/dashboard') ? 'bg-purple-100' : 'bg-purple-50'
+                                                }`}>
+                                                    <FaCalendarAlt className={`text-sm ${isActive('/dashboard') ? 'text-purple-600' : 'text-purple-500'}`} />
                                                 </div>
-                                                <span className="font-medium text-gray-700">Dashboard</span>
+                                                <span className="font-medium">Dashboard</span>
                                             </Link>
                                         </li>
 
                                         <li>
                                             <Link 
-                                                to="/bookings" 
-                                                className="flex items-center gap-3 py-3 px-4 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                                                to="/dashboard/my-bookings" 
+                                                className={`flex items-center gap-3 py-3 px-4 transition-colors ${
+                                                    isActive('/dashboard/my-bookings') 
+                                                    ? 'bg-blue-50 text-blue-600' 
+                                                    : 'hover:bg-gray-100'
+                                                }`}
                                             >
-                                                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                                    <FaBookOpen className="text-green-600 text-sm" />
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                                    isActive('/dashboard/my-bookings') ? 'bg-green-100' : 'bg-green-50'
+                                                }`}>
+                                                    <FaBookOpen className={`text-sm ${isActive('/dashboard/my-bookings') ? 'text-green-600' : 'text-green-500'}`} />
                                                 </div>
-                                                <span className="font-medium text-gray-700">My Bookings</span>
+                                                <span className="font-medium">My Bookings</span>
                                             </Link>
                                         </li>
                                     </div>
@@ -281,14 +400,22 @@ const Navbar = () => {
                             <div className="flex items-center gap-3">
                                 <Link 
                                     to="/auth/login" 
-                                    className="btn btn-outline btn-primary btn-sm min-w-[90px]"
+                                    className={`btn btn-sm min-w-[90px] ${
+                                        isActive('/auth/login') 
+                                        ? 'btn-primary' 
+                                        : 'btn-outline btn-primary'
+                                    }`}
                                 >
                                     Login
                                 </Link>
                         
                                 <Link 
                                     to="/services" 
-                                    className="btn btn-sm gap-2 min-w-[120px] hidden md:inline-flex"
+                                    className={`btn btn-sm gap-2 min-w-[120px] hidden md:inline-flex ${
+                                        isActive('/services') 
+                                        ? 'btn-primary border-2 border-blue-600' 
+                                        : 'btn-primary'
+                                    }`}
                                 >
                                     <FaBookOpen /> Book Now
                                 </Link>
@@ -300,7 +427,11 @@ const Navbar = () => {
                             <div className="md:hidden">
                                 <Link 
                                     to="/services" 
-                                    className="btn btn-primary btn-circle btn-sm"
+                                    className={`btn btn-circle btn-sm ${
+                                        isActive('/services') 
+                                        ? 'bg-blue-600 text-white' 
+                                        : 'btn-primary'
+                                    }`}
                                 >
                                     <FaBookOpen className="text-lg" />
                                 </Link>
