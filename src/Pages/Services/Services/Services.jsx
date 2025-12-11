@@ -32,7 +32,7 @@ const Services = () => {
         }
     };
 
-    // ... rest of the component remains the same
+
     const filteredServices = services.filter(service => {
         const matchesSearch = service.service_name.toLowerCase().includes(search.toLowerCase());
         const matchesCategory = !category || service.category === category;
@@ -59,7 +59,6 @@ const Services = () => {
                     </p>
                 </div>
 
-                {/* Search and Filter */}
                 <div className="flex flex-col md:flex-row gap-4 mb-8">
                     <div className="flex-1 relative">
                         <FaSearch className="absolute left-3 top-3 text-gray-400" />
