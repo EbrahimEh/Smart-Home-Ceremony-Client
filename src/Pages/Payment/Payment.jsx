@@ -22,7 +22,7 @@ const Payment = () => {
     const fetchBookingDetails = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3000/api/bookings/${bookingId}`);
+            const response = await fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/${bookingId}`);
             
             if (!response.ok) {
                 throw new Error('Failed to fetch booking');
@@ -61,7 +61,7 @@ const Payment = () => {
             setProcessing(true);
             
             if (method === 'bkash') {
-                const response = await fetch(`http://localhost:3000/api/bookings/${bookingId}/complete-payment`, {
+                const response = await fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/${bookingId}/complete-payment`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ const Payment = () => {
                 }
             }
             else if (method === 'manual') {
-                const response = await fetch(`http://localhost:3000/api/bookings/${bookingId}/complete-payment`, {
+                const response = await fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/${bookingId}/complete-payment`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const Payment = () => {
                 }
             }
             else if (method === 'test') {
-                const response = await fetch('http://localhost:3000/api/simulate-payment', {
+                const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/simulate-payment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -387,7 +387,7 @@ const Payment = () => {
                                         <button
                                             onClick={() => {
                                                 if (window.confirm('Are you sure you want to cancel this booking?')) {
-                                                    fetch(`http://localhost:3000/api/bookings/${bookingId}`, {
+                                                    fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/${bookingId}`, {
                                                         method: 'DELETE'
                                                     })
                                                     .then(res => res.json())

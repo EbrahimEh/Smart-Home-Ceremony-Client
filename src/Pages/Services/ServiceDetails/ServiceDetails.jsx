@@ -31,7 +31,7 @@ const ServiceDetails = () => {
             setLoading(true);
             setError(null);
             
-            const response = await fetch(`http://localhost:3000/api/services/${id}`);
+            const response = await fetch(`https://smart-home-ceremony-server.vercel.app/api/services/${id}`);
             
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));

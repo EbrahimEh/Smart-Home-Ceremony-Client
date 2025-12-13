@@ -33,7 +33,7 @@ const BookingForm = () => {
 
     const fetchServiceDetails = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/services/${serviceId}`);
+            const response = await axios.get(`https://smart-home-ceremony-server.vercel.app/api/services/${serviceId}`);
             setService(response.data);
         } catch (error) {
             console.error('Error fetching service:', error);
@@ -119,7 +119,7 @@ const BookingForm = () => {
             console.log('Sending booking data:', bookingData);
 
      
-            const response = await fetch('http://localhost:3000/api/bookings', {
+            const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

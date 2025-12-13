@@ -35,7 +35,7 @@ const BookingDetails = () => {
     const fetchBookingDetails = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3000/api/bookings/${bookingId}`);
+            const response = await fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/${bookingId}`);
             
             if (!response.ok) {
                 throw new Error('Failed to fetch booking');
@@ -366,7 +366,7 @@ const BookingDetails = () => {
                                 <button
                                     onClick={() => {
                                         if (window.confirm('Cancel this booking?')) {
-                                            fetch(`http://localhost:3000/api/bookings/${booking._id}`, {
+                                            fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/${booking._id}`, {
                                                 method: 'DELETE'
                                             })
                                             .then(res => res.json())

@@ -30,7 +30,7 @@ const PaymentHistory = () => {
         try {
             setLoading(true);
 
-            const bookingsResponse = await fetch(`http://localhost:3000/api/bookings/user/${user.uid}`);
+            const bookingsResponse = await fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/user/${user.uid}`);
             
             if (!bookingsResponse.ok) {
                 throw new Error('Failed to fetch bookings');

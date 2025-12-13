@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
 
     const saveUserToDB = async (userData) => {
         try {
-            await axios.post('http://localhost:3000/users', {
+            await axios.post('https://smart-home-ceremony-server.vercel.app/users', {
                 uid: userData.uid,
                 email: userData.email,
                 displayName: userData.displayName || userData.email.split('@')[0],

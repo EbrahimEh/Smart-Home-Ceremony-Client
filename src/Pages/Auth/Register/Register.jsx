@@ -165,7 +165,7 @@ const Register = () => {
                 updatedAt: new Date().toISOString()
             };
 
-            const response = await fetch('http://localhost:3000/users', {
+            const response = await fetch('https://smart-home-ceremony-server.vercel.app/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

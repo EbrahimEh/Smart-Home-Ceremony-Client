@@ -28,7 +28,7 @@ const MyBookings = () => {
     const fetchBookings = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3000/api/bookings/user/${user.uid}`);
+            const response = await fetch(`https://smart-home-ceremony-server.vercel.app/api/bookings/user/${user.uid}`);
             
             if (!response.ok) {
                 throw new Error('Failed to fetch bookings');

@@ -18,7 +18,7 @@ const ServicesSection = () => {
             setError(null);
             
             // Fetch from your server
-            const response = await fetch('http://localhost:3000/api/services');
+            const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/services');
             
             if (!response.ok) {
                 throw new Error(`Failed to fetch: ${response.status}`);

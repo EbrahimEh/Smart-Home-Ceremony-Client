@@ -13,7 +13,7 @@ const TopDecorators = () => {
     const fetchDecorators = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:3000/api/decorators/top');
+            const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/decorators/top');
             
             if (response.ok) {
                 const data = await response.json();

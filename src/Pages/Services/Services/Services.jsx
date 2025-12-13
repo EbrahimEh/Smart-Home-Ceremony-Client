@@ -15,7 +15,7 @@ const Services = () => {
 
     const fetchServices = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/services');
+            const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/services');
             if (!response.ok) throw new Error('Failed to fetch services');
 
             const data = await response.json();
