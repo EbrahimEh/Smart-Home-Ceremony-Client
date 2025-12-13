@@ -9,29 +9,29 @@ const Services = () => {
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('');
 
-    // useEffect(() => {
-    //     fetchServices();
-    // }, []);
+    useEffect(() => {
+        fetchServices();
+    }, []);
 
-    // const fetchServices = async () => {
-    //     try {
-    //         const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/services');
-    //         if (!response.ok) throw new Error('Failed to fetch services');
+    const fetchServices = async () => {
+        try {
+            const response = await fetch('https://smart-home-ceremony-server.vercel.app/api/services');
+            if (!response.ok) throw new Error('Failed to fetch services');
 
-    //         const data = await response.json();
-    //         console.log('Services loaded:', data);
+            const data = await response.json();
+            console.log('Services loaded:', data);
 
-    //         data.forEach(service => {
-    //             console.log(`Service: ${service.service_name}, ID: ${service._id}, Type: ${typeof service._id}`);
-    //         });
+            data.forEach(service => {
+                console.log(`Service: ${service.service_name}, ID: ${service._id}, Type: ${typeof service._id}`);
+            });
 
-    //         setServices(data);
-    //     } catch (error) {
-    //         console.error('Error fetching services:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+            setServices(data);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     const filteredServices = services.filter(service => {
