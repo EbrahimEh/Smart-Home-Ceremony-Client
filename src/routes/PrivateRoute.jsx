@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                render(<BallTriangle
+                <BallTriangle
                     height={100}
                     width={100}
                     radius={5}
@@ -19,7 +19,7 @@ const PrivateRoute = ({ children }) => {
                     wrapperStyle={{}}
                     wrapperClass=""
                     visible={true}
-                />)
+                />
             </div>
         );
     }

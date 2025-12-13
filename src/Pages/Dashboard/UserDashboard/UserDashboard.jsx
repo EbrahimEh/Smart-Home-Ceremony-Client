@@ -198,7 +198,7 @@ const UserDashboard = () => {
                     })}
                     
                     <Link
-                        to="/dashboard/profile"
+                        to=""
                         className="flex flex-col items-center justify-center p-2"
                     >
                         {user?.photoURL ? (

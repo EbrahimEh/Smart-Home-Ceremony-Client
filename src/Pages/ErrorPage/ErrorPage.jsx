@@ -1,10 +1,10 @@
 import React from 'react';
-import errorPage from '../../assets/error page.jpg'
+import errorPage from '../../assets/error.jpg'
 
 const ErrorPage = () => {
     return (
         <div>
-            <img src={errorPage} alt="" />
+            <img className='md:h-screen w-full' src={errorPage} alt="" />
         </div>
     );
 };

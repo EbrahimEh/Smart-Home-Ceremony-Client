@@ -91,7 +91,7 @@ const Banner = () => {
                                 </button>
                             </Link>
                             
-                            <Link to="/about" className="w-full sm:w-auto">
+                            <Link to="" className="w-full sm:w-auto">
                                 <button className="btn btn-outline text-white border-white hover:bg-white/10 text-base md:text-lg px-6 md:px-8 py-3 md:py-4 rounded-full w-full">
                                     Learn More
                                 </button>

@@ -195,7 +195,7 @@ const Navbar = () => {
                         </li>
                         <li>
                             <Link 
-                                to="/about" 
+                                to="" 
                                 className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
                                     isActive('/about') 
                                     ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
@@ -207,7 +207,7 @@ const Navbar = () => {
                         </li>
                         <li>
                             <Link 
-                                to="/contact" 
+                                to="" 
                                 className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 ${
                                     isActive('/contact') 
                                     ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600' 
@@ -331,9 +331,9 @@ const Navbar = () => {
                                     <div className="py-2">
                                         <li>
                                             <Link 
-                                                to="/profile" 
+                                                to="" 
                                                 className={`flex items-center gap-3 py-3 px-4 transition-colors ${
-                                                    isActive('/profile') 
+                                                    isActive('') 
                                                     ? 'bg-blue-50 text-blue-600' 
                                                     : 'hover:bg-gray-100'
                                                 }`}
@@ -341,7 +341,7 @@ const Navbar = () => {
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                                                     isActive('/profile') ? 'bg-blue-100' : 'bg-blue-50'
                                                 }`}>
-                                                    <FaUser className={`text-sm ${isActive('/profile') ? 'text-blue-600' : 'text-blue-500'}`} />
+                                                    <FaUser className={`text-sm ${isActive('') ? 'text-blue-600' : 'text-blue-500'}`} />
                                                 </div>
                                                 <span className="font-medium">Profile Settings</span>
                                             </Link>

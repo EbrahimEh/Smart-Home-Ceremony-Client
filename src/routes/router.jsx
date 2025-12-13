@@ -76,6 +76,10 @@ export const router = createBrowserRouter([
                         element: <PaymentHistory></PaymentHistory>
                     }
                 ]
+            },
+            {
+                path: '*',
+                element: <ErrorPage></ErrorPage>
             }
         ]
     },
@@ -90,6 +94,10 @@ export const router = createBrowserRouter([
             {
                 path: 'register',
                 element: <Register />
+            },
+            {
+                path: '*',
+                element: <ErrorPage></ErrorPage>
             }
         ]
     }

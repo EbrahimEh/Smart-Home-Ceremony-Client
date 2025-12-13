@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import useAuth from '../../../hooks/useAuth';
+import { BallTriangle } from 'react-loader-spinner';
 
 const ServiceDetails = () => {
     const { id } = useParams();
@@ -66,7 +67,16 @@ const ServiceDetails = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <FaSpinner className="animate-spin text-4xl text-blue-600" />
+                <BallTriangle
+                    height={100}
+                    width={100}
+                    radius={5}
+                    color="#4fa94d"
+                    ariaLabel="ball-triangle-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                />
                 <p className="ml-4 text-gray-600">Loading service details...</p>
             </div>
         );

@@ -8,23 +8,23 @@ const Footer = () => {
             {/* Top Section - Contact Details */}
             <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-8 w-full max-w-7xl">
 
-                <div className="space-y-2 text-left md:space-y-4">
-                    <div className="flex items-center gap-3">
-                        <FaPhone className="text-secondary text-xl" />
+                <div className="space-y-2 md:text-left flex flex-col text-center md:space-y-4">
+                    <div className="md:flex items-center gap-3">
+                        <FaPhone className="text-secondary mx-auto md:mx-0 text-xl" />
                         <div>
                             <p className="text-lg font-semibold">Call Us</p>
                             <p className="text-sm opacity-90">+880 1581885762</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <FaEnvelope className="text-secondary text-xl" />
+                    <div className="md:flex items-center gap-3">
+                        <FaEnvelope className="text-secondary md:mx-0 mx-auto text-xl" />
                         <div>
                             <p className="text-lg font-semibold">Email Us</p>
                             <p className="text-sm opacity-90">ebrahimsikder2288@gmail.com</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <FaMapMarkerAlt className="text-secondary text-xl" />
+                    <div className="md:flex items-center gap-3">
+                        <FaMapMarkerAlt className="text-secondary md:mx-0 mx-auto text-xl" />
                         <div>
                             <p className="text-lg font-semibold">Visit Us</p>
                             <p className="text-sm opacity-90">Narayanganj, Dhaka</p>
