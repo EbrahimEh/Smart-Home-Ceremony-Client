@@ -148,7 +148,7 @@ const Navbar = () => {
                             <img className='w-full h-full object-cover' src={logoImg} alt="Logo" />
                         </div>
                         <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                            StyleDecor
+                            Smart Home
                         </span>
                     </Link>
                 </div>
