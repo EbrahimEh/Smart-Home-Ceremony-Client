@@ -1,4 +1,5 @@
 # Smart Home Ceremony
+- Smart Home & Ceremony Decoration
 
 ## Purpose 
  - Backend server for managing home ceremony services, bookings, payments, and user management for event planning and decoration services.
@@ -7,12 +8,12 @@
  - https://smart-home-c6314.web.app
 
  ## Key Features
- -User authentication and management
- -Service catalog with categories
- -Booking system with status tracking
- -Payment processing simulation
- -Decorator profiles and ratings
- -MongoDB database integration
+ - User authentication and management 
+ - Service catalog with categories 
+ - Booking system with status tracking 
+ - Payment processing simulation 
+ - Decorator profiles and ratings 
+ - MongoDB database integration 
 
 ##⚠️ Note: API Loading
 Due to serverless deployment on Vercel, the backend API may occasionally take a few seconds to respond (especially after periods of inactivity). If you experience loading issues:
