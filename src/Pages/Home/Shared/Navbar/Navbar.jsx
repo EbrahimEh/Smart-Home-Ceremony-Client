@@ -147,9 +147,13 @@ const Navbar = () => {
                         <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
                             <img className='w-full h-full object-cover' src={logoImg} alt="Logo" />
                         </div>
-                        <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        <div>
+                            <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             Smart Home
                         </span>
+                        <p className="text-xs text-gray-500"><strong>& Ceremony Decoration</strong></p>
+                        </div>
+                        
                     </Link>
                 </div>
 
